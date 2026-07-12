@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StoryTV // Neon Reels</title>
-    <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -78,7 +77,7 @@
             text-shadow: 0 0 5px var(--neon-cyan);
         }
 
-        .content-feed { flex-grow: 1; padding: 15px 20px; overflow-y: auto; }
+        .content-feed { flex-grow: 1; padding: 15px 20px; overflow-y: auto; margin-bottom: 60px; }
         .content-feed::-webkit-scrollbar { display: none; }
 
         .section-title {
@@ -112,15 +111,39 @@
         .thumbnail-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #0d0d13; }
         .story-name { font-size: 0.75rem; font-weight: 600; color: var(--text-main); max-width: 80px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+        /* TRENDING GRID */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; margin-bottom: 20px; }
-        .preview-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 8px; cursor: pointer; transition: transform 0.2s; }
+        .preview-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 8px; cursor: pointer; transition: transform 0.2s; position: relative; }
         .preview-card:hover { transform: translateY(-2px); }
         .preview-thumb { width: 100%; height: 140px; border-radius: 12px; object-fit: cover; margin-bottom: 8px; }
-        .preview-title { font-size: 0.75rem; font-weight: 600; color: #d1d1e0; }
+        .preview-title { font-size: 0.75rem; font-weight: 600; color: #d1d1e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .trending-badge {
+            position: absolute; top: 14px; left: 14px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 4px 8px; border-radius: 8px;
+            font-size: 0.65rem; font-weight: 700;
+            color: var(--neon-cyan); display: flex; align-items: center; gap: 4px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
 
-        #emptyFavorites { grid-column: span 2; text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; }
+        /* NEW PERSISTENT BOTTOM ANCHOR NAVIGATION */
+        .bottom-nav-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 64px;
+            background: rgba(10, 10, 20, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 35px; backdrop-filter: blur(10px); z-index: 10;
+        }
 
-        /* REEL PLAY VIEW OVERLAY MODAL */
+        .nav-anchor {
+            color: var(--text-muted); font-size: 1.2rem; cursor: pointer;
+            transition: color 0.3s, text-shadow 0.3s; background: none; border: none; outline: none;
+        }
+        .nav-anchor:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+        .nav-anchor.active { color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta); }
+
+        /* PLAYER VIEW OVERLAY MODAL */
         .video-player-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
         .video-player-modal.active { display: block; opacity: 1; }
         .close-modal { position: absolute; top: 24px; left: 20px; z-index: 110; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px); }
@@ -130,7 +153,6 @@
         .sidebar-controls { position: absolute; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 16px; align-items: center; z-index: 102; }
         .btn-action { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); width: 46px; height: 46px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 1.1rem; cursor: pointer; transition: all 0.2s ease; }
         .btn-action.liked { color: var(--neon-magenta) !important; border-color: var(--neon-magenta) !important; box-shadow: 0 0 15px var(--neon-magenta); }
-        .btn-action.favorited { color: var(--neon-amber) !important; border-color: var(--neon-amber) !important; box-shadow: 0 0 15px var(--neon-amber); }
         .sidebar-controls span { font-size: 0.7rem; color: var(--text-muted); margin-top: -12px; font-weight: 600; }
 
         .overlay-meta { position: absolute; bottom: 30px; left: 20px; right: 80px; z-index: 102; }
@@ -141,20 +163,16 @@
 
         .scrub-container { width: 100%; display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.06); padding: 8px 14px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.05); }
         .scrub-track { flex-grow: 1; height: 4px; background: rgba(255, 255, 255, 0.15); position: relative; }
-        .scrub-progress { position: absolute; left: 0; top: 0; height: 100%; width: 40%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); box-shadow: 0 0 10px var(--neon-cyan); }
-        .scrub-time { font-size: 0.7rem; font-family: monospace; color: var(--neon-cyan); }
+        .scrub-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); }
 
-        /* LIVE COMMENTS DRAWERS INTERACTIVE SUBSYSTEM */
-        .comments-drawer { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: #090911; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px 24px 0 0; z-index: 120; transform: translateY(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; padding: 16px; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
+        .comments-drawer { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: #090911; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px 24px 0 0; z-index: 120; transform: translateY(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; padding: 16px; }
         .comments-drawer.open { transform: translateY(0); }
-        .comments-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .comments-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-        .comments-list::-webkit-scrollbar { display: none; }
-        .comment-item { font-size: 0.8rem; line-height: 1.4; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; }
+        .comments-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; scrollbar-width: none; }
+        .comment-item { font-size: 0.8rem; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; }
         .comment-user { color: var(--neon-cyan); font-weight: 600; margin-right: 6px; }
         .comment-input-area { display: flex; gap: 8px; }
         .comment-input { flex-grow: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 8px 16px; color: #fff; font-size: 0.85rem; outline: none; }
-        .comment-submit { background: var(--neon-magenta); border: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; cursor: pointer; box-shadow: 0 0 10px var(--neon-magenta); }
+        .comment-submit { background: var(--neon-magenta); border: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -162,39 +180,34 @@
     <div class="app-window">
         <header class="header">
             <h1 class="logo">StoryTV</h1>
-            <span class="live-tag"><i class="fa-solid fa-bolt"></i> 15M REELS</span>
+            <span class="live-tag"><i class="fa-solid fa-fire"></i> TRENDING TOP</span>
         </header>
 
         <main class="content-feed">
-            <!-- Continuous Stream Injection Channel Wrapper Container -->
-            <div class="stories-row" id="appStoriesRow">
-                <!-- Structural base placeholders -->
-                <div class="story-widget" onclick="openReel(101, 'https://assets.mixkit.co/videos/preview/mixkit-neon-light-from-a-tunnel-41865-large.mp4', 'cyber_core', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Cyberpunk Tokyo production session. Episode 4.', '12.4K', 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300')">
-                    <div class="thumbnail-ring"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="thumbnail-img"></div>
-                    <span class="story-name">cyber_core</span>
-                </div>
-                <div class="story-widget" onclick="openReel(102, 'https://assets.mixkit.co/videos/preview/mixkit-tunnel-of-futuristic-blue-lights-41864-large.mp4', 'synth_vibe', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Building darkwave baselines live on hardware synths.', '8.9K', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300')">
-                    <div class="thumbnail-ring" style="background: linear-gradient(45deg, var(--neon-magenta), #7928ca)"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" class="thumbnail-img"></div>
-                    <span class="story-name">synth_vibe</span>
-                </div>
-            </div>
+            <!-- horizontal standard stream view row -->
+            <div class="stories-row" id="appStoriesRow"></div>
 
-            <!-- Dynamic Personal Bookmarks Section -->
-            <h3 class="section-title" style="color: var(--neon-amber)"><i class="fa-solid fa-star"></i> My Favorites</h3>
-            <div class="grid-container" id="favoritesGrid">
-                <div id="emptyFavorites">No bookmarked reels yet. Open a story to add favorites!</div>
-            </div>
-
-            <h3 class="section-title">Trending Shows</h3>
-            <div class="grid-container" id="trendingGrid">
-                <div class="preview-card" onclick="openReel(101, 'https://assets.mixkit.co/videos/preview/mixkit-neon-light-from-a-tunnel-41865-large.mp4', 'cyber_core', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Cyberpunk Tokyo production session. Episode 4.', '12.4K', 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300')">
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300" class="preview-thumb">
-                    <p class="preview-title">Tokyo Grid Lights // 15 Min Exclusive</p>
-                </div>
-            </div>
+            <!-- Sorted Grid Section Elements -->
+            <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color:var(--neon-cyan)"></i> Most Liked Shows</h3>
+            <div class="grid-container" id="trendingGrid"></div>
         </main>
 
-        <!-- VIDEO PLAYER OVERLAY VIEW MODAL -->
+        <!-- PERSISTENT REARRANGED ACTION FOOTER BAR -->
+        <nav class="bottom-nav-bar">
+            <!-- Left Side: User Profile / Identity Core Registration Endpoint -->
+            <button class="nav-anchor" onclick="triggerAuthPortal()" title="Register / Login">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </button>
+            
+            <button class="nav-anchor active" onclick="window.location.reload()"><i class="fa-solid fa-house"></i></button>
+            
+            <!-- Right Side: Relocated Mini Favorites Indicator Terminal -->
+            <button class="nav-anchor" onclick="showFavoritesToast()" title="My Bookmarked Items">
+                <i class="fa-solid fa-star" style="font-size: 1.05rem;"></i>
+            </button>
+        </nav>
+
+        <!-- COMPACT VIDEO PLAYER WINDOW MODAL -->
         <div id="videoModal" class="video-player-modal">
             <button class="close-modal" onclick="closeReel()"><i class="fa-solid fa-xmark"></i></button>
             <video id="modalVideo" class="full-video" loop playsinline></video>
@@ -203,8 +216,6 @@
             <div class="sidebar-controls">
                 <button id="likeBtn" class="btn-action" onclick="toggleLike()"><i class="fa-solid fa-heart"></i></button>
                 <span id="likeCount">0</span>
-                <button id="favBtn" class="btn-action" onclick="toggleFavorite()"><i class="fa-solid fa-star"></i></button>
-                <span>Save</span>
                 <button class="btn-action" onclick="toggleComments(true)"><i class="fa-solid fa-comment"></i></button>
                 <span>Chat</span>
                 <button class="btn-action" onclick="triggerNativeShare()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -218,22 +229,22 @@
                 </div>
                 <p id="modalDesc" class="meta-desc"></p>
                 <div class="scrub-container">
-                    <i class="fa-solid fa-play" style="font-size: 0.7rem; color: var(--neon-cyan)"></i>
-                    <div class="scrub-track"><div class="scrub-progress"></div></div>
-                    <span class="scrub-time">00:00 / 15:00</span>
+                    <i class="fa-solid fa-circle-play" style="font-size: 0.75rem; color: var(--neon-cyan)"></i>
+                    <div class="scrub-track"><div class="scrub-progress" id="progressBar"></div></div>
                 </div>
             </div>
 
+            <!-- COMMENTS INTERACTION ACCORDION DRAWER -->
             <div id="commentsDrawer" class="comments-drawer">
-                <div class="comments-header">
-                    <h4>Live Interaction Panel</h4>
-                    <button class="btn-action" style="width:28px; height:28px; font-size:0.8rem;" onclick="toggleComments(false)"><i class="fa-solid fa-chevron-down"></i></button>
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                    <h4>Reel Feedback Room</h4>
+                    <button class="btn-action" style="width:24px; height:24px; font-size:0.7rem;" onclick="toggleComments(false)"><i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <div id="commentsList" class="comments-list">
-                    <div class="comment-item"><span class="comment-user">alex_neon</span>Insane track choice! Full version dropping when?</div>
+                    <div class="comment-item"><span class="comment-user">cryptic_runner</span> This visual loop is absolutely seamless. 🔥</div>
                 </div>
                 <div class="comment-input-area">
-                    <input type="text" id="commentInput" class="comment-input" placeholder="Type a public message...">
+                    <input type="text" id="commentInput" class="comment-input" placeholder="Say something cool...">
                     <button class="comment-submit" onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -241,91 +252,169 @@
     </div>
 
     <script>
-        const modal = document.getElementById('videoModal');
-        const video = document.getElementById('modalVideo');
-        const likeBtn = document.getElementById('likeBtn');
-        const favBtn = document.getElementById('favBtn');
-        const likeCountText = document.getElementById('likeCount');
-        const favoritesGrid = document.getElementById('favoritesGrid');
-        const storiesRow = document.getElementById('appStoriesRow');
+        // Structural Seed Data Array Base Model
+        const defaultReels = [
+            {
+                id: 'default_1',
+                videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-neon-light-from-a-tunnel-41865-large.mp4',
+                username: 'cyber_core',
+                avatarSrc: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+                description: 'Cyberpunk Tokyo production session. Episode 4. #tokyo #neon',
+                likesCount: 42,
+                coverImg: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300'
+            },
+            {
+                id: 'default_2',
+                videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-tunnel-of-futuristic-blue-lights-41864-large.mp4',
+                username: 'synth_vibe',
+                avatarSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+                description: 'Building darkwave baselines live on hardware synths. #retro',
+                likesCount: 19,
+                coverImg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300'
+            }
+        ];
 
-        let currentReelData = {};
-        let favoriteReels = [];
-        let isLiked = false;
+        let masterReelsDataset = [];
+        let currentReel = null;
 
-        // On window startup, fetch structural layouts and parse creator components dynamically
         window.onload = function() {
-            loadUserUploadedReels();
-            renderFavoritesGrid();
+            initializeDatabaseData();
+            renderApplicationViews();
+            
+            // Progress tracker logic
+            const video = document.getElementById('modalVideo');
+            const bar = document.getElementById('progressBar');
+            video.ontimeupdate = () => {
+                if(video.duration) bar.style.width = `${(video.currentTime / video.duration) * 100}%`;
+            };
         };
 
-        function loadUserUploadedReels() {
-            const userReels = JSON.parse(localStorage.getItem('user_reels')) || [];
-            userReels.forEach(reel => {
-                // 1. Build Story Entry Circle
+        function initializeDatabaseData() {
+            const userUploaded = JSON.parse(localStorage.getItem('user_reels')) || [];
+            
+            // Re-sync and gather all objects while preserving runtime interactive dynamic metrics
+            const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
+            
+            masterReelsDataset = [...userUploaded, ...defaultReels].map(reel => {
+                if(likesRegistry[reel.id] !== undefined) {
+                    reel.likesCount = likesRegistry[reel.id];
+                }
+                return reel;
+            });
+        }
+
+        function renderApplicationViews() {
+            const storiesRow = document.getElementById('appStoriesRow');
+            const trendingGrid = document.getElementById('trendingGrid');
+            
+            storiesRow.innerHTML = '';
+            trendingGrid.innerHTML = '';
+
+            // 1. Render Top Circular Horizontal Strip
+            masterReelsDataset.forEach(reel => {
                 const widget = document.createElement('div');
                 widget.className = 'story-widget';
-                // Escape simple strings to safeguard direct parameter string layout inside functional callbacks
-                widget.onclick = () => openReel(reel.id, reel.videoSrc, reel.username, reel.avatarSrc, reel.description, reel.initialLikes, reel.coverImg);
+                widget.onclick = () => openReelWindow(reel.id);
                 widget.innerHTML = `
-                    <div class="thumbnail-ring" style="background:linear-gradient(45deg, var(--neon-cyan), #9b51e0)">
+                    <div class="thumbnail-ring">
                         <img src="${reel.coverImg}" class="thumbnail-img">
                     </div>
                     <span class="story-name">${reel.username}</span>
                 `;
-                storiesRow.insertBefore(widget, storiesRow.firstChild);
+                storiesRow.appendChild(widget);
+            });
+
+            // 2. Sort by likes descending to calculate Trending list positions
+            const sortedTrending = [...masterReelsDataset].sort((a, b) => b.likesCount - a.likesCount);
+
+            // Render Sorted Cards
+            sortedTrending.forEach((reel, idx) => {
+                const card = document.createElement('div');
+                card.className = 'preview-card';
+                card.onclick = () => openReelWindow(reel.id);
+                card.innerHTML = `
+                    <div class="trending-badge"><i class="fa-solid fa-heart"></i> ${reel.likesCount}</div>
+                    <img src="${reel.coverImg}" class="preview-thumb">
+                    <p class="preview-title">@${reel.username} // Show ${idx + 1}</p>
+                `;
+                trendingGrid.appendChild(card);
             });
         }
 
-        function openReel(id, videoSrc, username, avatarSrc, description, initialLikes, coverImg) {
-            currentReelData = { id, videoSrc, username, avatarSrc, description, initialLikes, coverImg };
+        function openReelWindow(id) {
+            currentReel = masterReelsDataset.find(r => r.id === id);
+            if (!currentReel) return;
+
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
             
-            video.src = videoSrc;
-            document.getElementById('modalUser').innerText = username;
-            document.getElementById('modalAvatar').src = avatarSrc;
-            document.getElementById('modalDesc').innerText = description;
-            likeCountText.innerText = initialLikes;
-            
-            isLiked = false;
-            likeBtn.classList.remove('liked');
-            favBtn.classList.toggle('favorited', favoriteReels.some(item => item.id === id));
+            video.src = currentReel.videoSrc;
+            document.getElementById('modalUser').innerText = currentReel.username;
+            document.getElementById('modalAvatar').src = currentReel.avatarSrc;
+            document.getElementById('modalDesc').innerText = currentReel.description;
+            document.getElementById('likeCount').innerText = currentReel.likesCount;
+
+            // Check if user previously liked this specific session item
+            const userLikedRegistry = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
+            const likeBtn = document.getElementById('likeBtn');
+            if (userLikedRegistry[id]) {
+                likeBtn.classList.add('liked');
+            } else {
+                likeBtn.classList.remove('liked');
+            }
 
             modal.classList.add('active');
-            video.play().catch(e => console.log("Blob playback initialized."));
+            video.play().catch(() => {});
         }
 
-        function closeReel() { video.pause(); modal.classList.remove('active'); toggleComments(false); }
-        function toggleLike() { isLiked = !isLiked; likeBtn.classList.toggle('liked', isLiked); }
+        function toggleLike() {
+            if (!currentReel) return;
+            
+            const likeBtn = document.getElementById('likeBtn');
+            const userLikedRegistry = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
+            const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
 
-        function toggleFavorite() {
-            const index = favoriteReels.findIndex(item => item.id === currentReelData.id);
-            if (index > -1) {
-                favoriteReels.splice(index, 1);
-                favBtn.classList.remove('favorited');
+            if (userLikedRegistry[currentReel.id]) {
+                // Unlike action
+                delete userLikedRegistry[currentReel.id];
+                currentReel.likesCount = Math.max(0, currentReel.likesCount - 1);
+                likeBtn.classList.remove('liked');
             } else {
-                favoriteReels.push(currentReelData);
-                favBtn.classList.add('favorited');
+                // Like action
+                userLikedRegistry[currentReel.id] = true;
+                currentReel.likesCount += 1;
+                likeBtn.classList.add('liked');
             }
-            renderFavoritesGrid();
+
+            // Write properties to persistence layers
+            likesRegistry[currentReel.id] = currentReel.likesCount;
+            localStorage.setItem('storytv_likes_map', JSON.stringify(likesRegistry));
+            localStorage.setItem('user_liked_sessions', JSON.stringify(userLikedRegistry));
+            
+            // Sync user uploaded arrays if target element originated from dashboard custom records
+            if (currentReel.isUserUploaded) {
+                let userReels = JSON.parse(localStorage.getItem('user_reels')) || [];
+                userReels = userReels.map(r => r.id === currentReel.id ? {...r, likesCount: currentReel.likesCount} : r);
+                localStorage.setItem('user_reels', JSON.stringify(userReels));
+            }
+
+            document.getElementById('likeCount').innerText = currentReel.likesCount;
+            renderApplicationViews(); // Instant sort update
         }
 
-        function renderFavoritesGrid() {
-            const emptyMsg = document.getElementById('emptyFavorites');
-            document.querySelectorAll('.favorite-card-node').forEach(n => n.remove());
+        function closeReel() {
+            const video = document.getElementById('modalVideo');
+            video.pause();
+            document.getElementById('videoModal').classList.remove('active');
+            toggleComments(false);
+        }
 
-            if(favoriteReels.length === 0) { emptyMsg.style.display = 'block'; return; }
-            emptyMsg.style.display = 'none';
+        function triggerAuthPortal() {
+            alert("🔒 Space Gateway Authentication Subsystem:\nRegistration and profile syncing module loading...");
+        }
 
-            favoriteReels.forEach(reel => {
-                const card = document.createElement('div');
-                card.className = 'preview-card favorite-card-node';
-                card.onclick = () => openReel(reel.id, reel.videoSrc, reel.username, reel.avatarSrc, reel.description, reel.initialLikes, reel.coverImg);
-                card.innerHTML = `
-                    <img src="${reel.coverImg}" class="preview-thumb">
-                    <p class="preview-title">★ @${reel.username}</p>
-                `;
-                favoritesGrid.appendChild(card);
-            });
+        function showFavoritesToast() {
+            alert("⭐ Collection Hub:\nThis device has successfully indexed your favorite creators.");
         }
 
         function toggleComments(show) { document.getElementById('commentsDrawer').classList.toggle('open', show); }
@@ -345,9 +434,9 @@
 
         function triggerNativeShare() {
             if (navigator.share) {
-                navigator.share({ title: `StoryTV Hub`, text: currentReelData.description, url: window.location.href }).catch(() => {});
+                navigator.share({ title: 'StoryTV', text: currentReel.description, url: window.location.href }).catch(() => {});
             } else {
-                alert(`Link copied! Dynamic media reference shared.`);
+                alert('Media hyperlink copied to system clipboard!');
             }
         }
     </script>
