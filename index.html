@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StoryTV // Neon Reels</title>
+    <title>StoryTV // Neon Universe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --bg-color: #06060c;
@@ -17,427 +16,236 @@
             --text-main: #ffffff;
             --text-muted: #8a8ab0;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 10%, rgba(0, 242, 254, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 50% 90%, rgba(254, 1, 154, 0.05) 0%, transparent 50%);
+            background-color: var(--bg-color); color: var(--text-main);
+            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
+            background: radial-gradient(circle at 50% 90%, rgba(0, 242, 254, 0.05) 0%, transparent 50%);
         }
-
         .app-window {
-            width: 100%;
-            max-width: 420px;
-            height: 92vh;
-            max-height: 850px;
-            background: var(--panel-bg);
-            border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 242, 254, 0.05);
-            overflow: hidden;
-            position: relative;
-            backdrop-filter: blur(25px);
-            display: flex;
-            flex-direction: column;
+            width: 100%; max-width: 420px; height: 92vh; max-height: 850px; background: var(--panel-bg);
+            border-radius: 32px; border: 1px solid rgba(255, 255, 255, 0.08); overflow: hidden; position: relative;
+            backdrop-filter: blur(25px); display: flex; flex-direction: column;
         }
-
-        .header {
-            padding: 24px 20px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-weight: 800;
-            font-size: 1.4rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-
-        .live-tag {
-            background: rgba(0, 242, 254, 0.1);
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-shadow: 0 0 5px var(--neon-cyan);
-        }
-
+        header { padding: 24px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: 1.5px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .content-feed { flex-grow: 1; padding: 15px 20px; overflow-y: auto; margin-bottom: 60px; }
         .content-feed::-webkit-scrollbar { display: none; }
-
-        .section-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .stories-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
-        .stories-row::-webkit-scrollbar { display: none; }
-
-        .story-widget { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex-shrink: 0; transition: transform 0.2s ease; }
-        .story-widget:hover { transform: scale(1.05); }
-
-        .thumbnail-ring {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta));
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
-            margin-bottom: 8px;
-        }
-
-        .thumbnail-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #0d0d13; }
-        .story-name { font-size: 0.75rem; font-weight: 600; color: var(--text-main); max-width: 80px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        /* TRENDING GRID */
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; margin-bottom: 20px; }
-        .preview-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 8px; cursor: pointer; transition: transform 0.2s; position: relative; }
-        .preview-card:hover { transform: translateY(-2px); }
-        .preview-thumb { width: 100%; height: 140px; border-radius: 12px; object-fit: cover; margin-bottom: 8px; }
-        .preview-title { font-size: 0.75rem; font-weight: 600; color: #d1d1e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .trending-badge {
-            position: absolute; top: 14px; left: 14px;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 4px 8px; border-radius: 8px;
-            font-size: 0.65rem; font-weight: 700;
-            color: var(--neon-cyan); display: flex; align-items: center; gap: 4px;
-            border: 1px solid rgba(0, 242, 254, 0.3);
-        }
+        .section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        
+        /* Circular Row Custom Layout styling */
+        .stories-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 10px; }
+        .stories-row::-webkit-scrollbar { display: none; }
+        .story-widget { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex-shrink: 0; }
+        .thumbnail-ring { width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta)); }
+        .thumbnail-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #0d0d13; }
+        .story-name { font-size: 0.7rem; color: var(--text-main); margin-top: 6px; max-width: 75px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* NEW PERSISTENT BOTTOM ANCHOR NAVIGATION */
-        .bottom-nav-bar {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 64px;
-            background: rgba(10, 10, 20, 0.9);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 35px; backdrop-filter: blur(10px); z-index: 10;
-        }
+        /* Movie Folder Categorization Panels */
+        .movie-showcase-container { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 14px; margin-bottom: 16px; }
+        .showcase-header { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .preview-card { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 6px; cursor: pointer; position: relative; }
+        .preview-thumb { width: 100%; height: 115px; border-radius: 10px; object-fit: cover; margin-bottom: 6px; }
+        .preview-title { font-size: 0.7rem; font-weight: 600; color: #d1d1e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-likes { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 6px; font-size: 0.6rem; color: var(--neon-cyan); display: flex; align-items: center; gap: 3px; }
 
-        .nav-anchor {
-            color: var(--text-muted); font-size: 1.2rem; cursor: pointer;
-            transition: color 0.3s, text-shadow 0.3s; background: none; border: none; outline: none;
-        }
-        .nav-anchor:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
-        .nav-anchor.active { color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta); }
+        /* Navigation Footer Anchors */
+        .bottom-nav-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 64px; background: rgba(10, 10, 20, 0.9); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; padding: 0 35px; backdrop-filter: blur(10px); z-index: 10; }
+        .nav-anchor { color: var(--text-muted); font-size: 1.2rem; cursor: pointer; background: none; border: none; }
+        .nav-anchor.active { color: var(--neon-magenta); }
 
-        /* PLAYER VIEW OVERLAY MODAL */
-        .video-player-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .video-player-modal.active { display: block; opacity: 1; }
-        .close-modal { position: absolute; top: 24px; left: 20px; z-index: 110; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px); }
+        /* MODAL SCREEN OVERLAYS */
+        .video-player-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
+        .video-player-modal.active { display: block; }
+        .close-modal { position: absolute; top: 24px; left: 20px; z-index: 110; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .full-video { width: 100%; height: 100%; object-fit: cover; }
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(6, 6, 12, 0.95) 0%, transparent 45%, rgba(0,0,0,0.4) 100%); pointer-events: none; z-index: 101; }
-
         .sidebar-controls { position: absolute; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 16px; align-items: center; z-index: 102; }
-        .btn-action { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); width: 46px; height: 46px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 1.1rem; cursor: pointer; transition: all 0.2s ease; }
-        .btn-action.liked { color: var(--neon-magenta) !important; border-color: var(--neon-magenta) !important; box-shadow: 0 0 15px var(--neon-magenta); }
-        .sidebar-controls span { font-size: 0.7rem; color: var(--text-muted); margin-top: -12px; font-weight: 600; }
-
-        .overlay-meta { position: absolute; bottom: 30px; left: 20px; right: 80px; z-index: 102; }
-        .channel-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .channel-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--neon-cyan); }
-        .channel-name { font-weight: 600; font-size: 0.9rem; }
-        .meta-desc { font-size: 0.8rem; color: #d1d1e0; margin-bottom: 12px; }
-
-        .scrub-container { width: 100%; display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.06); padding: 8px 14px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .scrub-track { flex-grow: 1; height: 4px; background: rgba(255, 255, 255, 0.15); position: relative; }
-        .scrub-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); }
-
-        .comments-drawer { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: #090911; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px 24px 0 0; z-index: 120; transform: translateY(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; padding: 16px; }
-        .comments-drawer.open { transform: translateY(0); }
-        .comments-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; scrollbar-width: none; }
-        .comment-item { font-size: 0.8rem; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; }
-        .comment-user { color: var(--neon-cyan); font-weight: 600; margin-right: 6px; }
-        .comment-input-area { display: flex; gap: 8px; }
-        .comment-input { flex-grow: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 8px 16px; color: #fff; font-size: 0.85rem; outline: none; }
-        .comment-submit { background: var(--neon-magenta); border: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; cursor: pointer; }
+        .btn-action { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; cursor: pointer; }
+        .btn-action.liked { color: var(--neon-magenta) !important; border-color: var(--neon-magenta) !important; box-shadow: 0 0 10px var(--neon-magenta); }
+        .sidebar-controls span { font-size: 0.65rem; color: var(--text-muted); margin-top: -12px; font-weight: 600; }
+        .overlay-meta { position: absolute; bottom: 30px; left: 20px; right: 80px; z-index: 102; pointer-events: none;}
+        .channel-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .channel-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--neon-cyan); }
     </style>
 </head>
 <body>
 
     <div class="app-window">
-        <header class="header">
+        <header>
             <h1 class="logo">StoryTV</h1>
-            <span class="live-tag"><i class="fa-solid fa-fire"></i> TRENDING TOP</span>
+            <span style="font-size:0.65rem; background:rgba(0,242,254,0.1); border:1px solid var(--neon-cyan); color:var(--neon-cyan); padding:2px 8px; border-radius:8px;"><i class="fa-solid fa-satellite-dish"></i> SYNCED</span>
         </header>
 
         <main class="content-feed">
-            <!-- horizontal standard stream view row -->
             <div class="stories-row" id="appStoriesRow"></div>
-
-            <!-- Sorted Grid Section Elements -->
-            <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color:var(--neon-cyan)"></i> Most Liked Shows</h3>
-            <div class="grid-container" id="trendingGrid"></div>
+            
+            <div class="section-title"><i class="fa-solid fa-clapperboard" style="color:var(--neon-magenta)"></i> Cinema Collections</div>
+            <div id="moviesShowcaseArea"></div>
         </main>
 
-        <!-- PERSISTENT REARRANGED ACTION FOOTER BAR -->
         <nav class="bottom-nav-bar">
-            <!-- Left Side: User Profile / Identity Core Registration Endpoint -->
-            <button class="nav-anchor" onclick="triggerAuthPortal()" title="Register / Login">
-                <i class="fa-solid fa-user-astronaut"></i>
-            </button>
-            
-            <button class="nav-anchor active" onclick="window.location.reload()"><i class="fa-solid fa-house"></i></button>
-            
-            <!-- Right Side: Relocated Mini Favorites Indicator Terminal -->
-            <button class="nav-anchor" onclick="showFavoritesToast()" title="My Bookmarked Items">
-                <i class="fa-solid fa-star" style="font-size: 1.05rem;"></i>
-            </button>
+            <button class="nav-anchor" onclick="alert('User Gateway Terminal Online')"><i class="fa-solid fa-user-astronaut"></i></button>
+            <button class="nav-anchor active"><i class="fa-solid fa-house"></i></button>
+            <button class="nav-anchor" onclick="alert('Bookmark Indexes Managed Here')"><i class="fa-solid fa-star"></i></button>
         </nav>
 
-        <!-- COMPACT VIDEO PLAYER WINDOW MODAL -->
+        <!-- FLOATING VIDEO PLAYBACK OVERLAY -->
         <div id="videoModal" class="video-player-modal">
             <button class="close-modal" onclick="closeReel()"><i class="fa-solid fa-xmark"></i></button>
             <video id="modalVideo" class="full-video" loop playsinline></video>
-            <div class="modal-overlay"></div>
-
             <div class="sidebar-controls">
                 <button id="likeBtn" class="btn-action" onclick="toggleLike()"><i class="fa-solid fa-heart"></i></button>
                 <span id="likeCount">0</span>
-                <button class="btn-action" onclick="toggleComments(true)"><i class="fa-solid fa-comment"></i></button>
-                <span>Chat</span>
-                <button class="btn-action" onclick="triggerNativeShare()"><i class="fa-solid fa-paper-plane"></i></button>
-                <span>Share</span>
             </div>
-
             <div class="overlay-meta">
                 <div class="channel-row">
                     <img id="modalAvatar" src="" class="channel-avatar">
-                    <span id="modalUser" class="channel-name"></span>
+                    <span id="modalUser" style="font-weight:600; font-size:0.85rem;"></span>
                 </div>
-                <p id="modalDesc" class="meta-desc"></p>
-                <div class="scrub-container">
-                    <i class="fa-solid fa-circle-play" style="font-size: 0.75rem; color: var(--neon-cyan)"></i>
-                    <div class="scrub-track"><div class="scrub-progress" id="progressBar"></div></div>
-                </div>
-            </div>
-
-            <!-- COMMENTS INTERACTION ACCORDION DRAWER -->
-            <div id="commentsDrawer" class="comments-drawer">
-                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                    <h4>Reel Feedback Room</h4>
-                    <button class="btn-action" style="width:24px; height:24px; font-size:0.7rem;" onclick="toggleComments(false)"><i class="fa-solid fa-chevron-down"></i></button>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <div class="comment-item"><span class="comment-user">cryptic_runner</span> This visual loop is absolutely seamless. 🔥</div>
-                </div>
-                <div class="comment-input-area">
-                    <input type="text" id="commentInput" class="comment-input" placeholder="Say something cool...">
-                    <button class="comment-submit" onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
+                <p id="modalDesc" style="font-size:0.75rem; color:#d1d1e0;"></p>
             </div>
         </div>
     </div>
 
     <script>
-        // Structural Seed Data Array Base Model
-        const defaultReels = [
-            {
-                id: 'default_1',
-                videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-neon-light-from-a-tunnel-41865-large.mp4',
-                username: 'cyber_core',
-                avatarSrc: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-                description: 'Cyberpunk Tokyo production session. Episode 4. #tokyo #neon',
-                likesCount: 42,
-                coverImg: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300'
-            },
-            {
-                id: 'default_2',
-                videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-tunnel-of-futuristic-blue-lights-41864-large.mp4',
-                username: 'synth_vibe',
-                avatarSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-                description: 'Building darkwave baselines live on hardware synths. #retro',
-                likesCount: 19,
-                coverImg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300'
-            }
-        ];
-
-        let masterReelsDataset = [];
-        let currentReel = null;
+        let lastKnownSignature = null;
+        let masterFlatDataset = [];
+        let openReelId = null;
 
         window.onload = function() {
-            initializeDatabaseData();
-            renderApplicationViews();
-            
-            // Progress tracker logic
-            const video = document.getElementById('modalVideo');
-            const bar = document.getElementById('progressBar');
-            video.ontimeupdate = () => {
-                if(video.duration) bar.style.width = `${(video.currentTime / video.duration) * 100}%`;
-            };
+            syncAndRenderData();
+            // Silently check for background modifications every 2 seconds without interrupting user focus
+            setInterval(checkForSilentUpdates, 2000);
         };
 
-        function initializeDatabaseData() {
-            const userUploaded = JSON.parse(localStorage.getItem('user_reels')) || [];
-            
-            // Re-sync and gather all objects while preserving runtime interactive dynamic metrics
+        function syncAndRenderData() {
+            const database = JSON.parse(localStorage.getItem('storytv_movies_db')) || {};
             const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
-            
-            masterReelsDataset = [...userUploaded, ...defaultReels].map(reel => {
-                if(likesRegistry[reel.id] !== undefined) {
-                    reel.likesCount = likesRegistry[reel.id];
-                }
-                return reel;
-            });
-        }
+            lastKnownSignature = localStorage.getItem('db_generation_signature') || 'base';
 
-        function renderApplicationViews() {
+            masterFlatDataset = [];
             const storiesRow = document.getElementById('appStoriesRow');
-            const trendingGrid = document.getElementById('trendingGrid');
+            const showcaseArea = document.getElementById('moviesShowcaseArea');
             
             storiesRow.innerHTML = '';
-            trendingGrid.innerHTML = '';
+            showcaseArea.innerHTML = '';
 
-            // 1. Render Top Circular Horizontal Strip
-            masterReelsDataset.forEach(reel => {
-                const widget = document.createElement('div');
-                widget.className = 'story-widget';
-                widget.onclick = () => openReelWindow(reel.id);
-                widget.innerHTML = `
-                    <div class="thumbnail-ring">
-                        <img src="${reel.coverImg}" class="thumbnail-img">
-                    </div>
-                    <span class="story-name">${reel.username}</span>
-                `;
-                storiesRow.appendChild(widget);
+            const movieKeys = Object.keys(database);
+            if(movieKeys.length === 0) {
+                showcaseArea.innerHTML = `<div style="text-align:center; font-size:0.75rem; color:var(--text-muted); padding:30px;">Waiting for network broadcasts...</div>`;
+                return;
+            }
+
+            movieKeys.forEach(movieKey => {
+                const folderWrapper = document.createElement('div');
+                folderWrapper.className = 'movie-showcase-container';
+                folderWrapper.innerHTML = `<div class="showcase-header"><i class="fa-solid fa-film" style="color:var(--neon-cyan)"></i> ${movieKey}</div>`;
+                
+                const grid = document.createElement('div');
+                grid.className = 'grid-container';
+
+                database[movieKey].forEach(video => {
+                    // Inject real-time interactive counts
+                    if(likesRegistry[video.id] !== undefined) video.likesCount = likesRegistry[video.id];
+                    masterFlatDataset.push(video);
+
+                    // Render circular profile story node entry
+                    const widget = document.createElement('div');
+                    widget.className = 'story-widget';
+                    widget.onclick = () => openReelWindow(video.id);
+                    widget.innerHTML = `
+                        <div class="thumbnail-ring"><img src="${video.coverImg}" class="thumbnail-img"></div>
+                        <span class="story-name">${video.username}</span>
+                    `;
+                    storiesRow.appendChild(widget);
+
+                    // Render grid card entry inside specific folder block
+                    const card = document.createElement('div');
+                    card.className = 'preview-card';
+                    card.onclick = () => openReelWindow(video.id);
+                    card.innerHTML = `
+                        <div class="card-likes"><i class="fa-solid fa-heart"></i> ${video.likesCount}</div>
+                        <img src="${video.coverImg}" class="preview-thumb">
+                        <p class="preview-title">${video.description}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                folderWrapper.appendChild(grid);
+                showcaseArea.appendChild(folderWrapper);
             });
 
-            // 2. Sort by likes descending to calculate Trending list positions
-            const sortedTrending = [...masterReelsDataset].sort((a, b) => b.likesCount - a.likesCount);
+            // Resync open video instances silently if applicable
+            if(openReelId) {
+                const refreshedReel = masterFlatDataset.find(v => v.id === openReelId);
+                if(refreshedReel) {
+                    document.getElementById('likeCount').innerText = refreshedReel.likesCount;
+                } else {
+                    closeReel(); // Force drop out if current asset was purged by creator
+                }
+            }
+        }
 
-            // Render Sorted Cards
-            sortedTrending.forEach((reel, idx) => {
-                const card = document.createElement('div');
-                card.className = 'preview-card';
-                card.onclick = () => openReelWindow(reel.id);
-                card.innerHTML = `
-                    <div class="trending-badge"><i class="fa-solid fa-heart"></i> ${reel.likesCount}</div>
-                    <img src="${reel.coverImg}" class="preview-thumb">
-                    <p class="preview-title">@${reel.username} // Show ${idx + 1}</p>
-                `;
-                trendingGrid.appendChild(card);
-            });
+        function checkForSilentUpdates() {
+            const externalSignature = localStorage.getItem('db_generation_signature');
+            if(externalSignature !== lastKnownSignature) {
+                syncAndRenderData(); // Execute zero-latency refresh loop configuration elements
+            }
         }
 
         function openReelWindow(id) {
-            currentReel = masterReelsDataset.find(r => r.id === id);
-            if (!currentReel) return;
+            openReelId = id;
+            const target = masterFlatDataset.find(v => v.id === id);
+            if(!target) return;
 
-            const modal = document.getElementById('videoModal');
             const video = document.getElementById('modalVideo');
-            
-            video.src = currentReel.videoSrc;
-            document.getElementById('modalUser').innerText = currentReel.username;
-            document.getElementById('modalAvatar').src = currentReel.avatarSrc;
-            document.getElementById('modalDesc').innerText = currentReel.description;
-            document.getElementById('likeCount').innerText = currentReel.likesCount;
+            video.src = target.videoSrc;
+            document.getElementById('modalUser').innerText = target.username;
+            document.getElementById('modalAvatar').src = target.avatarSrc;
+            document.getElementById('modalDesc').innerText = target.description;
+            document.getElementById('likeCount').innerText = target.likesCount;
 
-            // Check if user previously liked this specific session item
-            const userLikedRegistry = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
-            const likeBtn = document.getElementById('likeBtn');
-            if (userLikedRegistry[id]) {
-                likeBtn.classList.add('liked');
-            } else {
-                likeBtn.classList.remove('liked');
-            }
+            const likedMap = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
+            document.getElementById('likeBtn').classList.toggle('liked', !!likedMap[id]);
 
-            modal.classList.add('active');
+            document.getElementById('videoModal').classList.add('active');
             video.play().catch(() => {});
         }
 
         function toggleLike() {
-            if (!currentReel) return;
-            
-            const likeBtn = document.getElementById('likeBtn');
-            const userLikedRegistry = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
+            if(!openReelId) return;
+            const likedMap = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
             const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
+            const target = masterFlatDataset.find(v => v.id === openReelId);
+            if(!target) return;
 
-            if (userLikedRegistry[currentReel.id]) {
-                // Unlike action
-                delete userLikedRegistry[currentReel.id];
-                currentReel.likesCount = Math.max(0, currentReel.likesCount - 1);
-                likeBtn.classList.remove('liked');
+            if(likedMap[openReelId]) {
+                delete likedMap[openReelId];
+                target.likesCount = Math.max(0, target.likesCount - 1);
             } else {
-                // Like action
-                userLikedRegistry[currentReel.id] = true;
-                currentReel.likesCount += 1;
-                likeBtn.classList.add('liked');
+                likedMap[openReelId] = true;
+                target.likesCount += 1;
             }
 
-            // Write properties to persistence layers
-            likesRegistry[currentReel.id] = currentReel.likesCount;
+            likesRegistry[openReelId] = target.likesCount;
             localStorage.setItem('storytv_likes_map', JSON.stringify(likesRegistry));
-            localStorage.setItem('user_liked_sessions', JSON.stringify(userLikedRegistry));
+            localStorage.setItem('user_liked_sessions', JSON.stringify(likedMap));
             
-            // Sync user uploaded arrays if target element originated from dashboard custom records
-            if (currentReel.isUserUploaded) {
-                let userReels = JSON.parse(localStorage.getItem('user_reels')) || [];
-                userReels = userReels.map(r => r.id === currentReel.id ? {...r, likesCount: currentReel.likesCount} : r);
-                localStorage.setItem('user_reels', JSON.stringify(userReels));
-            }
-
-            document.getElementById('likeCount').innerText = currentReel.likesCount;
-            renderApplicationViews(); // Instant sort update
+            document.getElementById('likeCount').innerText = target.likesCount;
+            document.getElementById('likeBtn').classList.toggle('liked', !!likedMap[openReelId]);
+            
+            // Increment tracking configuration elements
+            localStorage.setItem('db_generation_signature', Date.now());
+            syncAndRenderData();
         }
 
         function closeReel() {
-            const video = document.getElementById('modalVideo');
-            video.pause();
+            document.getElementById('modalVideo').pause();
             document.getElementById('videoModal').classList.remove('active');
-            toggleComments(false);
-        }
-
-        function triggerAuthPortal() {
-            alert("🔒 Space Gateway Authentication Subsystem:\nRegistration and profile syncing module loading...");
-        }
-
-        function showFavoritesToast() {
-            alert("⭐ Collection Hub:\nThis device has successfully indexed your favorite creators.");
-        }
-
-        function toggleComments(show) { document.getElementById('commentsDrawer').classList.toggle('open', show); }
-        
-        function postComment() {
-            const input = document.getElementById('commentInput');
-            const list = document.getElementById('commentsList');
-            if(!input.value.trim()) return;
-
-            const item = document.createElement('div');
-            item.className = 'comment-item';
-            item.innerHTML = `<span class="comment-user">you</span>${input.value.replace(/[&<>'"]/g, '')}`;
-            list.appendChild(item);
-            list.scrollTop = list.scrollHeight;
-            input.value = '';
-        }
-
-        function triggerNativeShare() {
-            if (navigator.share) {
-                navigator.share({ title: 'StoryTV', text: currentReel.description, url: window.location.href }).catch(() => {});
-            } else {
-                alert('Media hyperlink copied to system clipboard!');
-            }
+            openReelId = null;
         }
     </script>
 </body>
