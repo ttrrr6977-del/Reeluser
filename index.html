@@ -3,250 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StoryTV // Neon Universe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Video Feed Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #06060c;
-            --panel-bg: rgba(15, 15, 25, 0.7);
-            --neon-cyan: #00f2fe;
-            --neon-magenta: #fe019a;
-            --neon-amber: #ffaa00;
-            --text-main: #ffffff;
-            --text-muted: #8a8ab0;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body {
-            background-color: var(--bg-color); color: var(--text-main);
-            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
-            background: radial-gradient(circle at 50% 90%, rgba(0, 242, 254, 0.05) 0%, transparent 50%);
-        }
-        .app-window {
-            width: 100%; max-width: 420px; height: 92vh; max-height: 850px; background: var(--panel-bg);
-            border-radius: 32px; border: 1px solid rgba(255, 255, 255, 0.08); overflow: hidden; position: relative;
-            backdrop-filter: blur(25px); display: flex; flex-direction: column;
-        }
-        header { padding: 24px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: 1.5px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .content-feed { flex-grow: 1; padding: 15px 20px; overflow-y: auto; margin-bottom: 60px; }
-        .content-feed::-webkit-scrollbar { display: none; }
-        
-        .section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        
-        /* Circular Row Custom Layout styling */
-        .stories-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 10px; }
-        .stories-row::-webkit-scrollbar { display: none; }
-        .story-widget { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex-shrink: 0; }
-        .thumbnail-ring { width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta)); }
-        .thumbnail-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #0d0d13; }
-        .story-name { font-size: 0.7rem; color: var(--text-main); margin-top: 6px; max-width: 75px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
-        /* Movie Folder Categorization Panels */
-        .movie-showcase-container { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 14px; margin-bottom: 16px; }
-        .showcase-header { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* Full Screen Feed Layout Container */
+        .feed-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Error/Empty state screen adjustments */
+        .no-video-alert {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+            z-index: 5;
+        }
+
+        /* Right Side Floating Action Utilities (Shifted upward for easy thumb access) */
+        .side-actions {
+            position: absolute;
+            right: 15px;
+            bottom: 120px; /* Highly raised upward away from mobile browser edges */
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.2s, color 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .action-btn span { font-size: 10px; margin-top: 2px; font-weight: bold; }
+        .action-btn:active { transform: scale(0.9); }
         
-        .preview-card { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 6px; cursor: pointer; position: relative; }
-        .preview-thumb { width: 100%; height: 115px; border-radius: 10px; object-fit: cover; margin-bottom: 6px; }
-        .preview-title { font-size: 0.7rem; font-weight: 600; color: #d1d1e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-likes { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 6px; font-size: 0.6rem; color: var(--neon-cyan); display: flex; align-items: center; gap: 3px; }
+        /* State specific coloring logic */
+        .action-btn.favorited { color: #ffcc00; }
+        .action-btn.shared { color: #00cdff; }
 
-        /* Navigation Footer Anchors */
-        .bottom-nav-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 64px; background: rgba(10, 10, 20, 0.9); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; padding: 0 35px; backdrop-filter: blur(10px); z-index: 10; }
-        .nav-anchor { color: var(--text-muted); font-size: 1.2rem; cursor: pointer; background: none; border: none; }
-        .nav-anchor.active { color: var(--neon-magenta); }
+        /* Left side Metadata & Overlay details */
+        .video-meta-panel {
+            position: absolute;
+            left: 15px;
+            bottom: 120px; /* Adjusted up inline with buttons */
+            right: 80px;
+            z-index: 10;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+        }
 
-        /* MODAL SCREEN OVERLAYS */
-        .video-player-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
-        .video-player-modal.active { display: block; }
-        .close-modal { position: absolute; top: 24px; left: 20px; z-index: 110; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .full-video { width: 100%; height: 100%; object-fit: cover; }
-        .sidebar-controls { position: absolute; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 16px; align-items: center; z-index: 102; }
-        .btn-action { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; cursor: pointer; }
-        .btn-action.liked { color: var(--neon-magenta) !important; border-color: var(--neon-magenta) !important; box-shadow: 0 0 10px var(--neon-magenta); }
-        .sidebar-controls span { font-size: 0.65rem; color: var(--text-muted); margin-top: -12px; font-weight: 600; }
-        .overlay-meta { position: absolute; bottom: 30px; left: 20px; right: 80px; z-index: 102; pointer-events: none;}
-        .channel-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .channel-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--neon-cyan); }
+        .creator-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .creator-name { font-weight: bold; font-size: 16px; }
+        
+        /* Toggle state Follow Elements */
+        .follow-badge-btn {
+            background: #ff0050;
+            border: none;
+            color: #fff;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .follow-badge-btn.following {
+            background: rgba(255, 255, 255, 0.2);
+            color: #e5e5e5;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .video-description { font-size: 14px; color: #e1e1e1; line-height: 1.4; }
+
+        /* Global Notification Toast */
+        .toast-popup {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .toast-popup.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <div class="app-window">
-        <header>
-            <h1 class="logo">StoryTV</h1>
-            <span style="font-size:0.65rem; background:rgba(0,242,254,0.1); border:1px solid var(--neon-cyan); color:var(--neon-cyan); padding:2px 8px; border-radius:8px;"><i class="fa-solid fa-satellite-dish"></i> SYNCED</span>
-        </header>
+<div class="toast-popup" id="toast">Link copied to clipboard!</div>
 
-        <main class="content-feed">
-            <div class="stories-row" id="appStoriesRow"></div>
-            
-            <div class="section-title"><i class="fa-solid fa-clapperboard" style="color:var(--neon-magenta)"></i> Cinema Collections</div>
-            <div id="moviesShowcaseArea"></div>
-        </main>
-
-        <nav class="bottom-nav-bar">
-            <button class="nav-anchor" onclick="alert('User Gateway Terminal Online')"><i class="fa-solid fa-user-astronaut"></i></button>
-            <button class="nav-anchor active"><i class="fa-solid fa-house"></i></button>
-            <button class="nav-anchor" onclick="alert('Bookmark Indexes Managed Here')"><i class="fa-solid fa-star"></i></button>
-        </nav>
-
-        <!-- FLOATING VIDEO PLAYBACK OVERLAY -->
-        <div id="videoModal" class="video-player-modal">
-            <button class="close-modal" onclick="closeReel()"><i class="fa-solid fa-xmark"></i></button>
-            <video id="modalVideo" class="full-video" loop playsinline></video>
-            <div class="sidebar-controls">
-                <button id="likeBtn" class="btn-action" onclick="toggleLike()"><i class="fa-solid fa-heart"></i></button>
-                <span id="likeCount">0</span>
-            </div>
-            <div class="overlay-meta">
-                <div class="channel-row">
-                    <img id="modalAvatar" src="" class="channel-avatar">
-                    <span id="modalUser" style="font-weight:600; font-size:0.85rem;"></span>
-                </div>
-                <p id="modalDesc" style="font-size:0.75rem; color:#d1d1e0;"></p>
-            </div>
-        </div>
+<div class="feed-container">
+    <div class="no-video-alert" id="noVideoMsg">
+        <i class="fas fa-video-slash fa-2x" style="margin-bottom:10px; display:block;"></i>
+        No uploaded active video feed found.<br>Upload one via the Creator Studio.
     </div>
 
-    <script>
-        let lastKnownSignature = null;
-        let masterFlatDataset = [];
-        let openReelId = null;
+    <!-- Main Platform Player -->
+    <video id="userVideo" loop autoplay muted playsinline></video>
 
-        window.onload = function() {
-            syncAndRenderData();
-            // Silently check for background modifications every 2 seconds without interrupting user focus
-            setInterval(checkForSilentUpdates, 2000);
-        };
+    <!-- Overlay Context Meta Info Block -->
+    <div class="video-meta-panel">
+        <div class="creator-row">
+            <span class="creator-name">@creator_studio</span>
+            <button class="follow-badge-btn" id="followBtn" onclick="toggleFollow()">Follow</button>
+        </div>
+        <p class="video-description" id="videoDesc">Experience seamless rendering design architecture. Click anywhere to unmute audio track.</p>
+    </div>
 
-        function syncAndRenderData() {
-            const database = JSON.parse(localStorage.getItem('storytv_movies_db')) || {};
-            const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
-            lastKnownSignature = localStorage.getItem('db_generation_signature') || 'base';
+    <!-- Side Action System HUD -->
+    <div class="side-actions">
+        <!-- Favorite Button -->
+        <button class="action-btn" id="favBtn" onclick="toggleFavorite()" title="Save to Favorites">
+            <i class="fas fa-star"></i>
+            <span id="favText">Save</span>
+        </button>
 
-            masterFlatDataset = [];
-            const storiesRow = document.getElementById('appStoriesRow');
-            const showcaseArea = document.getElementById('moviesShowcaseArea');
-            
-            storiesRow.innerHTML = '';
-            showcaseArea.innerHTML = '';
+        <!-- Dynamic Share Link Dispatcher -->
+        <button class="action-btn" onclick="shareDeepLink()" title="Share Clean Link">
+            <i class="fas fa-share"></i>
+            <span>Share</span>
+        </button>
+    </div>
+</div>
 
-            const movieKeys = Object.keys(database);
-            if(movieKeys.length === 0) {
-                showcaseArea.innerHTML = `<div style="text-align:center; font-size:0.75rem; color:var(--text-muted); padding:30px;">Waiting for network broadcasts...</div>`;
-                return;
-            }
+<script>
+    const userVideo = document.getElementById('userVideo');
+    const noVideoMsg = document.getElementById('noVideoMsg');
+    const followBtn = document.getElementById('followBtn');
+    const favBtn = document.getElementById('favBtn');
+    const favText = document.getElementById('favText');
+    const toast = document.getElementById('toast');
 
-            movieKeys.forEach(movieKey => {
-                const folderWrapper = document.createElement('div');
-                folderWrapper.className = 'movie-showcase-container';
-                folderWrapper.innerHTML = `<div class="showcase-header"><i class="fa-solid fa-film" style="color:var(--neon-cyan)"></i> ${movieKey}</div>`;
-                
-                const grid = document.createElement('div');
-                grid.className = 'grid-container';
+    // Load initial context rules and states
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Core State Restoration
+        if(localStorage.getItem('isFollowing') === 'true') {
+            setFollowingState(true);
+        }
+        if(localStorage.getItem('isFavorited') === 'true') {
+            setFavoriteState(true);
+        }
 
-                database[movieKey].forEach(video => {
-                    // Inject real-time interactive counts
-                    if(likesRegistry[video.id] !== undefined) video.likesCount = likesRegistry[video.id];
-                    masterFlatDataset.push(video);
+        // 2. Direct Video Deep Link Parsing Strategy
+        const urlParams = new URLSearchParams(window.location.search);
+        const directVideoParam = urlParams.get('video');
 
-                    // Render circular profile story node entry
-                    const widget = document.createElement('div');
-                    widget.className = 'story-widget';
-                    widget.onclick = () => openReelWindow(video.id);
-                    widget.innerHTML = `
-                        <div class="thumbnail-ring"><img src="${video.coverImg}" class="thumbnail-img"></div>
-                        <span class="story-name">${video.username}</span>
-                    `;
-                    storiesRow.appendChild(widget);
+        if (directVideoParam === 'active' || window.location.hash === '#directView') {
+            document.getElementById('videoDesc').innerText = "Viewing shared direct link content broadcast.";
+        }
 
-                    // Render grid card entry inside specific folder block
-                    const card = document.createElement('div');
-                    card.className = 'preview-card';
-                    card.onclick = () => openReelWindow(video.id);
-                    card.innerHTML = `
-                        <div class="card-likes"><i class="fa-solid fa-heart"></i> ${video.likesCount}</div>
-                        <img src="${video.coverImg}" class="preview-thumb">
-                        <p class="preview-title">${video.description}</p>
-                    `;
-                    grid.appendChild(card);
-                });
-
-                folderWrapper.appendChild(grid);
-                showcaseArea.appendChild(folderWrapper);
+        // 3. Load Source Asset Payload
+        const sourceData = localStorage.getItem('globalSharedVideo');
+        if (sourceData) {
+            noVideoMsg.style.display = 'none';
+            userVideo.src = sourceData;
+            userVideo.play().catch(() => {
+                console.log("Autoplay engaged. Waiting for screen interaction to trigger audio hardware context.");
             });
-
-            // Resync open video instances silently if applicable
-            if(openReelId) {
-                const refreshedReel = masterFlatDataset.find(v => v.id === openReelId);
-                if(refreshedReel) {
-                    document.getElementById('likeCount').innerText = refreshedReel.likesCount;
-                } else {
-                    closeReel(); // Force drop out if current asset was purged by creator
-                }
-            }
+        } else {
+            userVideo.style.display = 'none';
         }
+    });
 
-        function checkForSilentUpdates() {
-            const externalSignature = localStorage.getItem('db_generation_signature');
-            if(externalSignature !== lastKnownSignature) {
-                syncAndRenderData(); // Execute zero-latency refresh loop configuration elements
-            }
+    // Tap to toggle sound anywhere on body frame
+    document.body.addEventListener('click', () => {
+        if(userVideo.muted) {
+            userVideo.muted = false;
         }
+    });
 
-        function openReelWindow(id) {
-            openReelId = id;
-            const target = masterFlatDataset.find(v => v.id === id);
-            if(!target) return;
+    // Follow/Unfollow State Manager
+    function toggleFollow() {
+        const standardState = localStorage.getItem('isFollowing') === 'true';
+        const targetState = !standardState;
+        localStorage.setItem('isFollowing', targetState);
+        setFollowingState(targetState);
+    }
 
-            const video = document.getElementById('modalVideo');
-            video.src = target.videoSrc;
-            document.getElementById('modalUser').innerText = target.username;
-            document.getElementById('modalAvatar').src = target.avatarSrc;
-            document.getElementById('modalDesc').innerText = target.description;
-            document.getElementById('likeCount').innerText = target.likesCount;
-
-            const likedMap = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
-            document.getElementById('likeBtn').classList.toggle('liked', !!likedMap[id]);
-
-            document.getElementById('videoModal').classList.add('active');
-            video.play().catch(() => {});
+    function setFollowingState(isFollowing) {
+        if(isFollowing) {
+            followBtn.innerText = "Following";
+            followBtn.classList.add('following');
+        } else {
+            followBtn.innerText = "Follow";
+            followBtn.classList.remove('following');
         }
+    }
 
-        function toggleLike() {
-            if(!openReelId) return;
-            const likedMap = JSON.parse(localStorage.getItem('user_liked_sessions')) || {};
-            const likesRegistry = JSON.parse(localStorage.getItem('storytv_likes_map')) || {};
-            const target = masterFlatDataset.find(v => v.id === openReelId);
-            if(!target) return;
+    // Favorite/Unfavorite State Manager
+    function toggleFavorite() {
+        const standardState = localStorage.getItem('isFavorited') === 'true';
+        const targetState = !standardState;
+        localStorage.setItem('isFavorited', targetState);
+        setFavoriteState(targetState);
+    }
 
-            if(likedMap[openReelId]) {
-                delete likedMap[openReelId];
-                target.likesCount = Math.max(0, target.likesCount - 1);
-            } else {
-                likedMap[openReelId] = true;
-                target.likesCount += 1;
-            }
-
-            likesRegistry[openReelId] = target.likesCount;
-            localStorage.setItem('storytv_likes_map', JSON.stringify(likesRegistry));
-            localStorage.setItem('user_liked_sessions', JSON.stringify(likedMap));
-            
-            document.getElementById('likeCount').innerText = target.likesCount;
-            document.getElementById('likeBtn').classList.toggle('liked', !!likedMap[openReelId]);
-            
-            // Increment tracking configuration elements
-            localStorage.setItem('db_generation_signature', Date.now());
-            syncAndRenderData();
+    function setFavoriteState(isFavorited) {
+        if(isFavorited) {
+            favBtn.classList.add('favorited');
+            favText.innerText = "Saved";
+        } else {
+            favBtn.classList.remove('favorited');
+            favText.innerText = "Save";
         }
+    }
 
-        function closeReel() {
-            document.getElementById('modalVideo').pause();
-            document.getElementById('videoModal').classList.remove('active');
-            openReelId = null;
-        }
-    </script>
+    // Deep Link Generator & Sharing Mechanism
+    function shareDeepLink() {
+        // Builds a URL pointing right back to this page with query tracking parameters
+        const baseCleanUrl = window.location.origin + window.location.pathname;
+        const deepLinkTarget = `${baseCleanUrl}?video=active#directView`;
+
+        navigator.clipboard.writeText(deepLinkTarget).then(() => {
+            showToast("Direct video link copied!");
+        }).catch(() => {
+            // Alternative manual copy fallback logic
+            alert(`Copy this direct video URL:\n${deepLinkTarget}`);
+        });
+    }
+
+    function showToast(msg) {
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+</script>
 </body>
 </html>
