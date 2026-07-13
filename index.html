@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Feed Platform</title>
+    <!-- FontAwesome for matching clean icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -36,47 +37,12 @@
             z-index: 5;
         }
 
-        /* Right Side Floating Action Utilities (Shifted upward for easy thumb access) */
-        .side-actions {
-            position: absolute;
-            right: 15px;
-            bottom: 120px; /* Highly raised upward away from mobile browser edges */
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .action-btn {
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.2s, color 0.2s;
-            backdrop-filter: blur(5px);
-        }
-        .action-btn span { font-size: 10px; margin-top: 2px; font-weight: bold; }
-        .action-btn:active { transform: scale(0.9); }
-        
-        /* State specific coloring logic */
-        .action-btn.favorited { color: #ffcc00; }
-        .action-btn.shared { color: #00cdff; }
-
         /* Left side Metadata & Overlay details */
         .video-meta-panel {
             position: absolute;
-            left: 15px;
-            bottom: 120px; /* Adjusted up inline with buttons */
-            right: 80px;
+            left: 20px;
+            bottom: 100px; /* Shifted up safely out of the way of the new action bar */
+            right: 20px;
             z-index: 10;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
         }
@@ -102,6 +68,38 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
         .video-description { font-size: 14px; color: #e1e1e1; line-height: 1.4; }
+
+        /* Raised Floating Control Action Bar (Matches Creator Site Style perfectly) */
+        .control-action-bar {
+            position: absolute;
+            bottom: 25px; /* Safely raised up for visibility */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(31, 31, 31, 0.95);
+            padding: 12px 30px;
+            border-radius: 40px;
+            display: flex;
+            gap: 35px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            width: max-content;
+        }
+        .control-action-bar button {
+            color: #b3b3b3;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.1s;
+            position: relative;
+        }
+        .control-action-bar button:hover { color: #fff; transform: scale(1.1); }
+        .control-action-bar .active { color: #ff0050; }
+        
+        /* Interactive coloring states */
+        .control-action-bar button.favorited { color: #ffcc00; }
 
         /* Global Notification Toast */
         .toast-popup {
@@ -144,18 +142,18 @@
         <p class="video-description" id="videoDesc">Experience seamless rendering design architecture. Click anywhere to unmute audio track.</p>
     </div>
 
-    <!-- Side Action System HUD -->
-    <div class="side-actions">
-        <!-- Favorite Button -->
-        <button class="action-btn" id="favBtn" onclick="toggleFavorite()" title="Save to Favorites">
+    <!-- Unified Floating Action Bar (Identical to Creator layout architecture) -->
+    <div class="control-action-bar">
+        <button class="active" title="Home Feed"><i class="fas fa-home"></i></button>
+        
+        <!-- Save/Favorite Button Integration -->
+        <button id="favBtn" onclick="toggleFavorite()" title="Save to Favorites">
             <i class="fas fa-star"></i>
-            <span id="favText">Save</span>
         </button>
 
-        <!-- Dynamic Share Link Dispatcher -->
-        <button class="action-btn" onclick="shareDeepLink()" title="Share Clean Link">
+        <!-- Share Link Dispatcher Button -->
+        <button onclick="shareDeepLink()" title="Share Link">
             <i class="fas fa-share"></i>
-            <span>Share</span>
         </button>
     </div>
 </div>
@@ -165,7 +163,6 @@
     const noVideoMsg = document.getElementById('noVideoMsg');
     const followBtn = document.getElementById('followBtn');
     const favBtn = document.getElementById('favBtn');
-    const favText = document.getElementById('favText');
     const toast = document.getElementById('toast');
 
     // Load initial context rules and states
@@ -200,7 +197,10 @@
     });
 
     // Tap to toggle sound anywhere on body frame
-    document.body.addEventListener('click', () => {
+    document.body.addEventListener('click', (e) => {
+        // Prevent unmuting if clicking on buttons
+        if (e.target.closest('button')) return;
+        
         if(userVideo.muted) {
             userVideo.muted = false;
         }
@@ -235,23 +235,19 @@
     function setFavoriteState(isFavorited) {
         if(isFavorited) {
             favBtn.classList.add('favorited');
-            favText.innerText = "Saved";
         } else {
             favBtn.classList.remove('favorited');
-            favText.innerText = "Save";
         }
     }
 
     // Deep Link Generator & Sharing Mechanism
     function shareDeepLink() {
-        // Builds a URL pointing right back to this page with query tracking parameters
         const baseCleanUrl = window.location.origin + window.location.pathname;
         const deepLinkTarget = `${baseCleanUrl}?video=active#directView`;
 
         navigator.clipboard.writeText(deepLinkTarget).then(() => {
             showToast("Direct video link copied!");
         }).catch(() => {
-            // Alternative manual copy fallback logic
             alert(`Copy this direct video URL:\n${deepLinkTarget}`);
         });
     }
